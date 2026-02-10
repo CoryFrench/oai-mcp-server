@@ -16,6 +16,7 @@ The goal is to expand the MCP server with a larger catalog of small, narrow, rea
 - [x] (2026-02-10 17:20Z) Implemented narrow tax lookup tools and added safety annotations to all tools.
 - [x] (2026-02-10 18:20Z) Implemented IRS migration tools with FIPS helpers and AGI-by-ZIP lookup.
 - [x] (2026-02-10 18:45Z) Normalized IRS state inputs and loosened county matching to support abbreviations.
+- [x] (2026-02-10 19:10Z) Added FRED series search and observations tools for API-backed series lookup.
 - [ ] Validate tools via MCP Inspector and in ChatGPT developer mode.
 
 ## Surprises & Discoveries
@@ -42,6 +43,10 @@ The goal is to expand the MCP server with a larger catalog of small, narrow, rea
 
 - Decision: Use IRS views for migration data and add FIPS helpers for city/state lookups.
   Rationale: Views provide human-friendly fields while FIPS helpers resolve ambiguous inputs without exposing raw table complexity to the model.
+  Date/Author: 2026-02-10 / Codex
+
+- Decision: Use FRED series search tools so the model can discover series IDs before requesting observations.
+  Rationale: Reduces reliance on memorized series IDs and keeps tools narrow and error-resistant.
   Date/Author: 2026-02-10 / Codex
 
 ## Outcomes & Retrospective
@@ -71,6 +76,7 @@ Add a focused set of tools in these categories:
 - MLS fixed-window summaries: small tools like "recent sales last 30 days by city" or "active listings count by city", each with a single, fixed time window and limited parameters.
 - Tax lookups: land use descriptions, condo classification descriptions, and narrow parcel lookups from `tax.vw_palmbeach_full`.
 - IRS migration: state/county inflow/outflow via `irs.vw_stateinflow`, `irs.vw_stateoutflow`, `irs.vw_countyinflow`, `irs.vw_countyoutflow` plus AGI by ZIP from `irs.agi_zip`.
+- FRED API: series search, observations, and tag search for series ID discovery.
 - Utilities: development names from `waterfrontdata.development_data` with optional prefix or contains filters and strict limits.
 
 Avoid creating any tool that accepts arbitrary SQL, column names, or wide filter sets. Each tool should be a single-purpose query, with safe defaults and explicit bounds. Keep descriptions short and precise so the model can select the correct tool.

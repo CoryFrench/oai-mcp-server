@@ -119,6 +119,9 @@ export function createMcpServer(pool) {
   const IRS_RESOLVE_COUNTY_FIPS_BY_CITY = "irs.resolve_county_fips_by_city_state";
   const IRS_RESOLVE_STATE_FIPS = "irs.resolve_state_fips";
   const IRS_AGI_BY_ZIP = "irs.agi_by_zip";
+  const FRED_SERIES_SEARCH = "fred.series_search";
+  const FRED_SERIES_OBSERVATIONS = "fred.series_observations";
+  const FRED_SERIES_SEARCH_TAGS = "fred.series_search_tags";
   const TAX_PALMBEACH_COLUMNS = `
     property_control_number,
     owner_name,
@@ -1267,6 +1270,264 @@ export function createMcpServer(pool) {
                 year: year ?? null,
                 count: result.rowCount ?? 0,
                 rows: result.rows
+              },
+              null,
+              2
+            )
+          }
+        ]
+      };
+    }
+  );
+
+  server.registerTool(
+    FRED_SERIES_SEARCH,
+    {
+      description: "Search FRED series IDs by keyword.",
+      inputSchema: z.object({
+        search_text: z.string().trim().min(2).max(200),
+        search_type: z.enum(["full_text", "series_id"]).default("full_text"),
+        limit: z.number().int().min(1).max(200).default(25),
+        order_by: z
+          .enum([
+            "search_rank",
+            "series_id",
+            "title",
+            "units",
+            "frequency",
+            "seasonal_adjustment",
+            "realtime_start",
+            "realtime_end",
+            "last_updated",
+            "observation_start",
+            "observation_end",
+            "popularity",
+            "group_popularity"
+          ])
+          .default("search_rank"),
+        sort_order: z.enum(["asc", "desc"]).default("desc")
+      }),
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+      _meta: {
+        securitySchemes: [{ type: "oauth2", scopes: requiredScopes }]
+      }
+    },
+    async ({ search_text, search_type, limit, order_by, sort_order }, extra) => {
+      const authError = requireAuth(extra, requiredScopes);
+      if (authError) {
+        return authError;
+      }
+
+      const apiKey = process.env.FRED_API_KEY;
+      if (!apiKey) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "FRED_API_KEY is not configured."
+            }
+          ],
+          isError: true
+        };
+      }
+
+      const url = new URL("https://api.stlouisfed.org/fred/series/search");
+      url.searchParams.set("api_key", apiKey);
+      url.searchParams.set("file_type", "json");
+      url.searchParams.set("search_text", search_text);
+      url.searchParams.set("search_type", search_type);
+      url.searchParams.set("limit", String(limit));
+      url.searchParams.set("order_by", order_by);
+      url.searchParams.set("sort_order", sort_order);
+
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        const body = await response.text();
+        return {
+          content: [
+            {
+              type: "text",
+              text: `FRED series search failed: ${response.status} ${body.slice(0, 300)}`
+            }
+          ],
+          isError: true
+        };
+      }
+
+      const payload = await response.json();
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                search_text,
+                count: payload?.count ?? null,
+                offset: payload?.offset ?? null,
+                limit: payload?.limit ?? limit,
+                rows: payload?.seriess ?? []
+              },
+              null,
+              2
+            )
+          }
+        ]
+      };
+    }
+  );
+
+  server.registerTool(
+    FRED_SERIES_OBSERVATIONS,
+    {
+      description: "Fetch FRED series observations by series ID.",
+      inputSchema: z.object({
+        series_id: z.string().trim().min(1).max(50),
+        observation_start: z.string().trim().min(4).max(10).optional(),
+        observation_end: z.string().trim().min(4).max(10).optional(),
+        limit: z.number().int().min(1).max(1000).default(100),
+        sort_order: z.enum(["asc", "desc"]).default("desc")
+      }),
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+      _meta: {
+        securitySchemes: [{ type: "oauth2", scopes: requiredScopes }]
+      }
+    },
+    async ({ series_id, observation_start, observation_end, limit, sort_order }, extra) => {
+      const authError = requireAuth(extra, requiredScopes);
+      if (authError) {
+        return authError;
+      }
+
+      const apiKey = process.env.FRED_API_KEY;
+      if (!apiKey) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "FRED_API_KEY is not configured."
+            }
+          ],
+          isError: true
+        };
+      }
+
+      const url = new URL("https://api.stlouisfed.org/fred/series/observations");
+      url.searchParams.set("api_key", apiKey);
+      url.searchParams.set("file_type", "json");
+      url.searchParams.set("series_id", series_id);
+      url.searchParams.set("limit", String(limit));
+      url.searchParams.set("sort_order", sort_order);
+      if (observation_start) {
+        url.searchParams.set("observation_start", observation_start);
+      }
+      if (observation_end) {
+        url.searchParams.set("observation_end", observation_end);
+      }
+
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        const body = await response.text();
+        return {
+          content: [
+            {
+              type: "text",
+              text: `FRED observations failed: ${response.status} ${body.slice(0, 300)}`
+            }
+          ],
+          isError: true
+        };
+      }
+
+      const payload = await response.json();
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                series_id,
+                count: payload?.count ?? null,
+                offset: payload?.offset ?? null,
+                limit: payload?.limit ?? limit,
+                observations: payload?.observations ?? []
+              },
+              null,
+              2
+            )
+          }
+        ]
+      };
+    }
+  );
+
+  server.registerTool(
+    FRED_SERIES_SEARCH_TAGS,
+    {
+      description: "Fetch tags related to a FRED series search query.",
+      inputSchema: z.object({
+        series_search_text: z.string().trim().min(2).max(200),
+        limit: z.number().int().min(1).max(200).default(25),
+        order_by: z.enum(["series_count", "popularity", "name", "group_id"]).default("series_count"),
+        sort_order: z.enum(["asc", "desc"]).default("desc")
+      }),
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+      _meta: {
+        securitySchemes: [{ type: "oauth2", scopes: requiredScopes }]
+      }
+    },
+    async ({ series_search_text, limit, order_by, sort_order }, extra) => {
+      const authError = requireAuth(extra, requiredScopes);
+      if (authError) {
+        return authError;
+      }
+
+      const apiKey = process.env.FRED_API_KEY;
+      if (!apiKey) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "FRED_API_KEY is not configured."
+            }
+          ],
+          isError: true
+        };
+        }
+
+      const url = new URL("https://api.stlouisfed.org/fred/series/search/tags");
+      url.searchParams.set("api_key", apiKey);
+      url.searchParams.set("file_type", "json");
+      url.searchParams.set("series_search_text", series_search_text);
+      url.searchParams.set("limit", String(limit));
+      url.searchParams.set("order_by", order_by);
+      url.searchParams.set("sort_order", sort_order);
+
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        const body = await response.text();
+        return {
+          content: [
+            {
+              type: "text",
+              text: `FRED search tags failed: ${response.status} ${body.slice(0, 300)}`
+            }
+          ],
+          isError: true
+        };
+      }
+
+      const payload = await response.json();
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                series_search_text,
+                count: payload?.count ?? null,
+                offset: payload?.offset ?? null,
+                limit: payload?.limit ?? limit,
+                tags: payload?.tags ?? []
               },
               null,
               2
