@@ -366,7 +366,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_development_since",
-    description: "Count closed sales for a development since a date.",
+    description:
+      "Count closed sales for a development since a sold_date. Use utils.list_developments to find valid values.",
     whereField: "development_name",
     dateMode: "since"
   });
@@ -377,7 +378,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_development_between",
-    description: "Count closed sales for a development between two dates.",
+    description:
+      "Count closed sales for a development between sold_date values. Use utils.list_developments to find valid values.",
     whereField: "development_name",
     dateMode: "between"
   });
@@ -388,7 +390,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_city_since",
-    description: "Count closed sales for a city since a date.",
+    description: "Count closed sales for a city since a sold_date. Use mls.list_cities.",
     whereField: "city",
     dateMode: "since"
   });
@@ -399,7 +401,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_city_between",
-    description: "Count closed sales for a city between two dates.",
+    description: "Count closed sales for a city between sold_date values. Use mls.list_cities.",
     whereField: "city",
     dateMode: "between"
   });
@@ -410,7 +412,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_zip_since",
-    description: "Count closed sales for a ZIP since a date.",
+    description: "Count closed sales for a ZIP since a sold_date. Use mls.list_zip_codes.",
     whereField: "zip_code",
     dateMode: "since"
   });
@@ -421,7 +423,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_zip_between",
-    description: "Count closed sales for a ZIP between two dates.",
+    description: "Count closed sales for a ZIP between sold_date values. Use mls.list_zip_codes.",
     whereField: "zip_code",
     dateMode: "between"
   });
@@ -432,7 +434,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_area_since",
-    description: "Count closed sales for an MLS area since a date.",
+    description: "Count closed sales for an MLS area since a sold_date. Use mls.list_areas.",
     whereField: "area",
     dateMode: "since"
   });
@@ -443,7 +445,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_area_between",
-    description: "Count closed sales for an MLS area between two dates.",
+    description: "Count closed sales for an MLS area between sold_date values. Use mls.list_areas.",
     whereField: "area",
     dateMode: "between"
   });
@@ -454,7 +456,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_development_subdivision_since",
-    description: "Count closed sales for a development and subdivision since a date.",
+    description:
+      "Count closed sales for a development and subdivision since a sold_date. Use utils.list_developments to find valid development values.",
     whereField: "development_name",
     hasSubdivision: true,
     dateMode: "since"
@@ -466,7 +469,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_sales_by_development_subdivision_between",
-    description: "Count closed sales for a development and subdivision between two dates.",
+    description:
+      "Count closed sales for a development and subdivision between sold_date values. Use utils.list_developments to find valid development values.",
     whereField: "development_name",
     hasSubdivision: true,
     dateMode: "between"
@@ -478,7 +482,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_active_by_development",
-    description: "Count active listings for a development.",
+    description:
+      "Count active listings for a development (latest record per listing_id). Use utils.list_developments.",
     field: "development_name"
   });
 
@@ -488,7 +493,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_active_by_city",
-    description: "Count active listings for a city.",
+    description: "Count active listings for a city (latest record per listing_id). Use mls.list_cities.",
     field: "city"
   });
 
@@ -498,7 +503,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_active_by_zip",
-    description: "Count active listings for a ZIP.",
+    description: "Count active listings for a ZIP (latest record per listing_id). Use mls.list_zip_codes.",
     field: "zip_code"
   });
 
@@ -508,7 +513,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_active_by_area",
-    description: "Count active listings for an MLS area.",
+    description: "Count active listings for an MLS area (latest record per listing_id). Use mls.list_areas.",
     field: "area"
   });
 
@@ -518,7 +523,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_sale_price_by_development_since",
-    description: "Median sale price for a development since a date.",
+    description:
+      "Median sale price for a development since a sold_date. Use utils.list_developments to find valid values.",
     whereField: "development_name",
     dateMode: "since",
     aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
@@ -532,7 +538,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_sale_price_by_development_since",
-    description: "Average sale price for a development since a date.",
+    description:
+      "Average sale price for a development since a sold_date. Use utils.list_developments to find valid values.",
     whereField: "development_name",
     dateMode: "since",
     aggExpr: "avg(nullif(sold_price, '')::numeric)",
@@ -546,7 +553,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_sale_price_by_development_between",
-    description: "Median sale price for a development between two dates.",
+    description:
+      "Median sale price for a development between sold_date values. Use utils.list_developments to find valid values.",
     whereField: "development_name",
     dateMode: "between",
     aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
@@ -560,7 +568,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_sale_price_by_development_between",
-    description: "Average sale price for a development between two dates.",
+    description:
+      "Average sale price for a development between sold_date values. Use utils.list_developments to find valid values.",
     whereField: "development_name",
     dateMode: "between",
     aggExpr: "avg(nullif(sold_price, '')::numeric)",
@@ -574,7 +583,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_sale_price_by_city_since",
-    description: "Median sale price for a city since a date.",
+    description: "Median sale price for a city since a sold_date. Use mls.list_cities.",
     whereField: "city",
     dateMode: "since",
     aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
@@ -588,7 +597,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_sale_price_by_city_since",
-    description: "Average sale price for a city since a date.",
+    description: "Average sale price for a city since a sold_date. Use mls.list_cities.",
     whereField: "city",
     dateMode: "since",
     aggExpr: "avg(nullif(sold_price, '')::numeric)",
@@ -602,7 +611,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_sale_price_by_city_between",
-    description: "Median sale price for a city between two dates.",
+    description: "Median sale price for a city between sold_date values. Use mls.list_cities.",
     whereField: "city",
     dateMode: "between",
     aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
@@ -616,7 +625,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_sale_price_by_city_between",
-    description: "Average sale price for a city between two dates.",
+    description: "Average sale price for a city between sold_date values. Use mls.list_cities.",
     whereField: "city",
     dateMode: "between",
     aggExpr: "avg(nullif(sold_price, '')::numeric)",
@@ -630,7 +639,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_sale_price_by_zip_since",
-    description: "Median sale price for a ZIP since a date.",
+    description: "Median sale price for a ZIP since a sold_date. Use mls.list_zip_codes.",
     whereField: "zip_code",
     dateMode: "since",
     aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
@@ -644,7 +653,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_sale_price_by_zip_since",
-    description: "Average sale price for a ZIP since a date.",
+    description: "Average sale price for a ZIP since a sold_date. Use mls.list_zip_codes.",
     whereField: "zip_code",
     dateMode: "since",
     aggExpr: "avg(nullif(sold_price, '')::numeric)",
@@ -658,7 +667,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_sale_price_by_zip_between",
-    description: "Median sale price for a ZIP between two dates.",
+    description: "Median sale price for a ZIP between sold_date values. Use mls.list_zip_codes.",
     whereField: "zip_code",
     dateMode: "between",
     aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
@@ -672,7 +681,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_sale_price_by_zip_between",
-    description: "Average sale price for a ZIP between two dates.",
+    description: "Average sale price for a ZIP between sold_date values. Use mls.list_zip_codes.",
     whereField: "zip_code",
     dateMode: "between",
     aggExpr: "avg(nullif(sold_price, '')::numeric)",
@@ -686,7 +695,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_sale_price_by_area_since",
-    description: "Median sale price for an MLS area since a date.",
+    description: "Median sale price for an MLS area since a sold_date. Use mls.list_areas.",
     whereField: "area",
     dateMode: "since",
     aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
@@ -700,7 +709,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_sale_price_by_area_since",
-    description: "Average sale price for an MLS area since a date.",
+    description: "Average sale price for an MLS area since a sold_date. Use mls.list_areas.",
     whereField: "area",
     dateMode: "since",
     aggExpr: "avg(nullif(sold_price, '')::numeric)",
@@ -714,7 +723,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_sale_price_by_area_between",
-    description: "Median sale price for an MLS area between two dates.",
+    description: "Median sale price for an MLS area between sold_date values. Use mls.list_areas.",
     whereField: "area",
     dateMode: "between",
     aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
@@ -728,7 +737,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_sale_price_by_area_between",
-    description: "Average sale price for an MLS area between two dates.",
+    description: "Average sale price for an MLS area between sold_date values. Use mls.list_areas.",
     whereField: "area",
     dateMode: "between",
     aggExpr: "avg(nullif(sold_price, '')::numeric)",
@@ -745,7 +754,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_price_per_sqft_by_development_since",
-    description: "Median sale price per sqft for a development since a date.",
+    description:
+      "Median sale price per sqft for a development since a sold_date. Use utils.list_developments.",
     whereField: "development_name",
     dateMode: "since",
     aggExpr: pricePerSqftExpr,
@@ -759,7 +769,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_price_per_sqft_by_development_between",
-    description: "Median sale price per sqft for a development between two dates.",
+    description:
+      "Median sale price per sqft for a development between sold_date values. Use utils.list_developments.",
     whereField: "development_name",
     dateMode: "between",
     aggExpr: pricePerSqftExpr,
@@ -773,7 +784,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_price_per_sqft_by_area_since",
-    description: "Median sale price per sqft for an MLS area since a date.",
+    description: "Median sale price per sqft for an MLS area since a sold_date. Use mls.list_areas.",
     whereField: "area",
     dateMode: "since",
     aggExpr: pricePerSqftExpr,
@@ -787,7 +798,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_price_per_sqft_by_area_between",
-    description: "Median sale price per sqft for an MLS area between two dates.",
+    description: "Median sale price per sqft for an MLS area between sold_date values. Use mls.list_areas.",
     whereField: "area",
     dateMode: "between",
     aggExpr: pricePerSqftExpr,
@@ -801,7 +812,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_price_per_sqft_by_development_subdivision_since",
-    description: "Median sale price per sqft for a development + subdivision since a date.",
+    description:
+      "Median sale price per sqft for a development + subdivision since a sold_date. Use utils.list_developments.",
     whereField: "development_name",
     hasSubdivision: true,
     dateMode: "since",
@@ -816,7 +828,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_price_per_sqft_by_development_subdivision_between",
-    description: "Median sale price per sqft for a development + subdivision between two dates.",
+    description:
+      "Median sale price per sqft for a development + subdivision between sold_date values. Use utils.list_developments.",
     whereField: "development_name",
     hasSubdivision: true,
     dateMode: "between",
@@ -831,7 +844,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_days_on_market_by_development_since",
-    description: "Median days on market for a development since a date.",
+    description:
+      "Median DOM for a development since a sold_date (DOM = sold_date - listing_date). Use utils.list_developments.",
     whereField: "development_name",
     dateMode: "since",
     aggExpr:
@@ -846,7 +860,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_days_on_market_by_development_since",
-    description: "Average days on market for a development since a date.",
+    description:
+      "Average DOM for a development since a sold_date (DOM = sold_date - listing_date). Use utils.list_developments.",
     whereField: "development_name",
     dateMode: "since",
     aggExpr: "avg((nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
@@ -860,7 +875,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_days_on_market_by_city_since",
-    description: "Median days on market for a city since a date.",
+    description:
+      "Median DOM for a city since a sold_date (DOM = sold_date - listing_date). Use mls.list_cities.",
     whereField: "city",
     dateMode: "since",
     aggExpr:
@@ -875,7 +891,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_days_on_market_by_city_since",
-    description: "Average days on market for a city since a date.",
+    description:
+      "Average DOM for a city since a sold_date (DOM = sold_date - listing_date). Use mls.list_cities.",
     whereField: "city",
     dateMode: "since",
     aggExpr: "avg((nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
@@ -889,7 +906,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_days_on_market_by_area_since",
-    description: "Median days on market for an MLS area since a date.",
+    description:
+      "Median DOM for an MLS area since a sold_date (DOM = sold_date - listing_date). Use mls.list_areas.",
     whereField: "area",
     dateMode: "since",
     aggExpr:
@@ -904,7 +922,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_days_on_market_by_area_since",
-    description: "Average days on market for an MLS area since a date.",
+    description:
+      "Average DOM for an MLS area since a sold_date (DOM = sold_date - listing_date). Use mls.list_areas.",
     whereField: "area",
     dateMode: "since",
     aggExpr: "avg((nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
@@ -918,7 +937,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_days_on_market_by_development_between",
-    description: "Median days on market for a development between two dates.",
+    description:
+      "Median DOM for a development between sold_date values (DOM = sold_date - listing_date). Use utils.list_developments.",
     whereField: "development_name",
     dateMode: "between",
     aggExpr:
@@ -933,7 +953,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_days_on_market_by_development_between",
-    description: "Average days on market for a development between two dates.",
+    description:
+      "Average DOM for a development between sold_date values (DOM = sold_date - listing_date). Use utils.list_developments.",
     whereField: "development_name",
     dateMode: "between",
     aggExpr: "avg((nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
@@ -947,7 +968,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_days_on_market_by_city_between",
-    description: "Median days on market for a city between two dates.",
+    description:
+      "Median DOM for a city between sold_date values (DOM = sold_date - listing_date). Use mls.list_cities.",
     whereField: "city",
     dateMode: "between",
     aggExpr:
@@ -962,7 +984,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_days_on_market_by_city_between",
-    description: "Average days on market for a city between two dates.",
+    description:
+      "Average DOM for a city between sold_date values (DOM = sold_date - listing_date). Use mls.list_cities.",
     whereField: "city",
     dateMode: "between",
     aggExpr: "avg((nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
@@ -976,7 +999,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.median_days_on_market_by_area_between",
-    description: "Median days on market for an MLS area between two dates.",
+    description:
+      "Median DOM for an MLS area between sold_date values (DOM = sold_date - listing_date). Use mls.list_areas.",
     whereField: "area",
     dateMode: "between",
     aggExpr:
@@ -991,7 +1015,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.avg_days_on_market_by_area_between",
-    description: "Average days on market for an MLS area between two dates.",
+    description:
+      "Average DOM for an MLS area between sold_date values (DOM = sold_date - listing_date). Use mls.list_areas.",
     whereField: "area",
     dateMode: "between",
     aggExpr: "avg((nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
@@ -1005,7 +1030,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_new_listings_by_city_since",
-    description: "Count new listings for a city since a date.",
+    description: "Count new listings for a city since a listing_date. Use mls.list_cities.",
     field: "city"
   });
 
@@ -1015,7 +1040,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_new_listings_by_development_since",
-    description: "Count new listings for a development since a date.",
+    description:
+      "Count new listings for a development since a listing_date. Use utils.list_developments.",
     field: "development_name"
   });
 
@@ -1025,7 +1051,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_new_listings_by_area_since",
-    description: "Count new listings for an MLS area since a date.",
+    description: "Count new listings for an MLS area since a listing_date. Use mls.list_areas.",
     field: "area"
   });
 
@@ -1035,7 +1061,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_under_contract_by_city",
-    description: "Count under contract listings for a city.",
+    description:
+      "Count under contract listings for a city (latest record per listing_id). Use mls.list_cities.",
     field: "city"
   });
 
@@ -1045,7 +1072,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_under_contract_by_development",
-    description: "Count under contract listings for a development.",
+    description:
+      "Count under contract listings for a development (latest record per listing_id). Use utils.list_developments.",
     field: "development_name"
   });
 
@@ -1055,7 +1083,8 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.count_under_contract_by_area",
-    description: "Count under contract listings for an MLS area.",
+    description:
+      "Count under contract listings for an MLS area (latest record per listing_id). Use mls.list_areas.",
     field: "area"
   });
 
@@ -1065,7 +1094,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.get_listing_by_parcel_id",
-    description: "Fetch the latest listing by parcel ID.",
+    description: "Fetch the latest listing by parcel ID (latest record per listing_id).",
     field: "parcel_id",
     limit: 5
   });
@@ -1076,7 +1105,7 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     requiredScopes,
     requireAuth,
     name: "mls.get_listing_by_listing_id",
-    description: "Fetch the latest listing by listing ID.",
+    description: "Fetch the latest listing by listing ID (latest record per listing_id).",
     field: "listing_id",
     limit: 1
   });

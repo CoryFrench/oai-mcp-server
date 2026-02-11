@@ -148,6 +148,7 @@ export function createMcpServer(pool) {
   const MLS_LIST_CITIES = "mls.list_cities";
   const MLS_LIST_COUNTIES = "mls.list_counties";
   const MLS_LIST_ZIP_CODES = "mls.list_zip_codes";
+  const MLS_LIST_AREAS = "mls.list_areas";
   const UTILS_LIST_DEVELOPMENTS = "utils.list_developments";
   const TAX_LIST_LAND_USE_DESCRIPTIONS = "tax.list_land_use_descriptions";
   const TAX_LIST_CONDO_DESCRIPTIONS = "tax.list_condo_descriptions";
@@ -668,6 +669,55 @@ export function createMcpServer(pool) {
                 count: result.rowCount ?? 0,
                 limit,
                 condo_descriptions: result.rows.map(row => row.classification_description)
+              },
+              null,
+              2
+            )
+          }
+        ]
+      };
+    }
+  );
+
+  server.registerTool(
+    MLS_LIST_AREAS,
+    {
+      description: "List distinct MLS areas.",
+      inputSchema: z.object({
+        limit: z.number().int().min(1).max(2000).default(500)
+      }),
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+      _meta: {
+        securitySchemes: [{ type: "oauth2", scopes: requiredScopes }]
+      }
+    },
+    async ({ limit }, extra) => {
+      const authError = requireAuth(extra, requiredScopes);
+      if (authError) {
+        return authError;
+      }
+
+      const result = await pool.query(
+        `
+        select distinct area
+        from mls.beaches_residential
+        where area is not null
+          and trim(area) != ''
+        order by area asc
+        limit $1
+        `,
+        [limit]
+      );
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                count: result.rowCount ?? 0,
+                limit,
+                areas: result.rows.map(row => row.area)
               },
               null,
               2
