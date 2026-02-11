@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import * as z from "zod";
+import { registerMlsMetricsTools } from "./mlsMetricsTools.js";
 
 function parseScopes(value) {
   if (!value) {
@@ -92,6 +93,49 @@ async function resolveStateName(pool, stateInput) {
   return trimmed;
 }
 
+const MLS_LATEST_LISTINGS_CTE = `
+  with latest_listings as (
+    select *,
+           row_number() over (
+             partition by listing_id
+             order by nullif(timestamp, '')::timestamp desc
+           ) as rn
+    from mls.beaches_residential
+    where listing_id is not null
+  )
+`;
+
+function buildClosedSalesFilters(dateClause) {
+  return `
+    rn = 1
+    and status = 'Closed'
+    and nullif(sold_date, '')::date is not null
+    ${dateClause}
+  `;
+}
+
+function buildActiveFilters() {
+  return `
+    rn = 1
+    and status = 'Active'
+  `;
+}
+
+function buildUnderContractFilters() {
+  return `
+    rn = 1
+    and status in ('Active Under Contract', 'Pending')
+  `;
+}
+
+function buildNewListingFilters(dateClause) {
+  return `
+    rn = 1
+    and nullif(listing_date, '')::date is not null
+    ${dateClause}
+  `;
+}
+
 export function createMcpServer(pool) {
   const requiredScopes = parseScopes(
     process.env.OAUTH_SCOPES ?? process.env.AZURE_OAUTH_SCOPES
@@ -122,6 +166,58 @@ export function createMcpServer(pool) {
   const FRED_SERIES_SEARCH = "fred.series_search";
   const FRED_SERIES_OBSERVATIONS = "fred.series_observations";
   const FRED_SERIES_SEARCH_TAGS = "fred.series_search_tags";
+  const MLS_COUNT_SALES_BY_DEVELOPMENT_SINCE = "mls.count_sales_by_development_since";
+  const MLS_COUNT_SALES_BY_DEVELOPMENT_BETWEEN = "mls.count_sales_by_development_between";
+  const MLS_COUNT_SALES_BY_CITY_SINCE = "mls.count_sales_by_city_since";
+  const MLS_COUNT_SALES_BY_CITY_BETWEEN = "mls.count_sales_by_city_between";
+  const MLS_COUNT_SALES_BY_ZIP_SINCE = "mls.count_sales_by_zip_since";
+  const MLS_COUNT_SALES_BY_ZIP_BETWEEN = "mls.count_sales_by_zip_between";
+  const MLS_COUNT_SALES_BY_DEVELOPMENT_SUBDIVISION_SINCE =
+    "mls.count_sales_by_development_subdivision_since";
+  const MLS_COUNT_SALES_BY_DEVELOPMENT_SUBDIVISION_BETWEEN =
+    "mls.count_sales_by_development_subdivision_between";
+  const MLS_COUNT_ACTIVE_BY_DEVELOPMENT = "mls.count_active_by_development";
+  const MLS_COUNT_ACTIVE_BY_CITY = "mls.count_active_by_city";
+  const MLS_COUNT_ACTIVE_BY_ZIP = "mls.count_active_by_zip";
+  const MLS_MEDIAN_SALE_PRICE_BY_DEVELOPMENT_SINCE =
+    "mls.median_sale_price_by_development_since";
+  const MLS_AVG_SALE_PRICE_BY_DEVELOPMENT_SINCE = "mls.avg_sale_price_by_development_since";
+  const MLS_MEDIAN_SALE_PRICE_BY_DEVELOPMENT_BETWEEN =
+    "mls.median_sale_price_by_development_between";
+  const MLS_AVG_SALE_PRICE_BY_DEVELOPMENT_BETWEEN =
+    "mls.avg_sale_price_by_development_between";
+  const MLS_MEDIAN_SALE_PRICE_BY_CITY_SINCE = "mls.median_sale_price_by_city_since";
+  const MLS_AVG_SALE_PRICE_BY_CITY_SINCE = "mls.avg_sale_price_by_city_since";
+  const MLS_MEDIAN_SALE_PRICE_BY_CITY_BETWEEN = "mls.median_sale_price_by_city_between";
+  const MLS_AVG_SALE_PRICE_BY_CITY_BETWEEN = "mls.avg_sale_price_by_city_between";
+  const MLS_MEDIAN_SALE_PRICE_BY_ZIP_SINCE = "mls.median_sale_price_by_zip_since";
+  const MLS_AVG_SALE_PRICE_BY_ZIP_SINCE = "mls.avg_sale_price_by_zip_since";
+  const MLS_MEDIAN_SALE_PRICE_BY_ZIP_BETWEEN = "mls.median_sale_price_by_zip_between";
+  const MLS_AVG_SALE_PRICE_BY_ZIP_BETWEEN = "mls.avg_sale_price_by_zip_between";
+  const MLS_MEDIAN_PRICE_PER_SQFT_BY_DEVELOPMENT_SINCE =
+    "mls.median_price_per_sqft_by_development_since";
+  const MLS_MEDIAN_PRICE_PER_SQFT_BY_DEVELOPMENT_BETWEEN =
+    "mls.median_price_per_sqft_by_development_between";
+  const MLS_MEDIAN_PRICE_PER_SQFT_BY_DEVELOPMENT_SUBDIVISION_SINCE =
+    "mls.median_price_per_sqft_by_development_subdivision_since";
+  const MLS_MEDIAN_PRICE_PER_SQFT_BY_DEVELOPMENT_SUBDIVISION_BETWEEN =
+    "mls.median_price_per_sqft_by_development_subdivision_between";
+  const MLS_MEDIAN_DOM_BY_DEVELOPMENT_SINCE = "mls.median_days_on_market_by_development_since";
+  const MLS_AVG_DOM_BY_DEVELOPMENT_SINCE = "mls.avg_days_on_market_by_development_since";
+  const MLS_MEDIAN_DOM_BY_CITY_SINCE = "mls.median_days_on_market_by_city_since";
+  const MLS_AVG_DOM_BY_CITY_SINCE = "mls.avg_days_on_market_by_city_since";
+  const MLS_MEDIAN_DOM_BY_DEVELOPMENT_BETWEEN =
+    "mls.median_days_on_market_by_development_between";
+  const MLS_AVG_DOM_BY_DEVELOPMENT_BETWEEN = "mls.avg_days_on_market_by_development_between";
+  const MLS_MEDIAN_DOM_BY_CITY_BETWEEN = "mls.median_days_on_market_by_city_between";
+  const MLS_AVG_DOM_BY_CITY_BETWEEN = "mls.avg_days_on_market_by_city_between";
+  const MLS_COUNT_NEW_LISTINGS_BY_CITY_SINCE = "mls.count_new_listings_by_city_since";
+  const MLS_COUNT_NEW_LISTINGS_BY_DEVELOPMENT_SINCE =
+    "mls.count_new_listings_by_development_since";
+  const MLS_COUNT_UNDER_CONTRACT_BY_CITY = "mls.count_under_contract_by_city";
+  const MLS_COUNT_UNDER_CONTRACT_BY_DEVELOPMENT = "mls.count_under_contract_by_development";
+  const MLS_GET_LISTING_BY_PARCEL_ID = "mls.get_listing_by_parcel_id";
+  const MLS_GET_LISTING_BY_LISTING_ID = "mls.get_listing_by_listing_id";
   const TAX_PALMBEACH_COLUMNS = `
     property_control_number,
     owner_name,
@@ -1694,6 +1790,8 @@ export function createMcpServer(pool) {
       };
     }
   );
+
+  registerMlsMetricsTools({ server, pool, requiredScopes, requireAuth });
 
   return server;
 }

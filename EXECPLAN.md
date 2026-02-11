@@ -17,6 +17,7 @@ The goal is to expand the MCP server with a larger catalog of small, narrow, rea
 - [x] (2026-02-10 18:20Z) Implemented IRS migration tools with FIPS helpers and AGI-by-ZIP lookup.
 - [x] (2026-02-10 18:45Z) Normalized IRS state inputs and loosened county matching to support abbreviations.
 - [x] (2026-02-10 19:10Z) Added FRED series search and observations tools for API-backed series lookup.
+- [x] (2026-02-10 20:40Z) Implemented MLS metrics tools (counts, medians, DOM, new listings, under contract, and listing lookups).
 - [ ] Validate tools via MCP Inspector and in ChatGPT developer mode.
 
 ## Surprises & Discoveries
@@ -99,8 +100,8 @@ All commands are run from the repo root: `C:\Users\WaterfrontAI\Documents\Repos\
 4) Rebuild and redeploy the MCP server Docker image before any testing:
 
     cd C:\Users\WaterfrontAI\Documents\Repos\microservices-platform
-    docker compose build oai_app
-    docker compose up -d oai_app
+    docker compose build oai-app
+    docker compose up -d oai-app
 
 5) Reconnect the ChatGPT app to refresh the tool catalog.
 
@@ -111,8 +112,8 @@ Validation must show the tools are callable and safe, using the Dockerized MCP s
 1) Rebuild and redeploy the MCP server container (required before testing):
 
     cd C:\Users\WaterfrontAI\Documents\Repos\microservices-platform
-    docker compose build oai_app
-    docker compose up -d oai_app
+    docker compose build oai-app
+    docker compose up -d oai-app
 
 2) Use the MCP Inspector to verify tool schemas and example calls:
 
