@@ -431,6 +431,28 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     pool,
     requiredScopes,
     requireAuth,
+    name: "mls.count_sales_by_area_since",
+    description: "Count closed sales for an MLS area since a date.",
+    whereField: "area",
+    dateMode: "since"
+  });
+
+  registerCountTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.count_sales_by_area_between",
+    description: "Count closed sales for an MLS area between two dates.",
+    whereField: "area",
+    dateMode: "between"
+  });
+
+  registerCountTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
     name: "mls.count_sales_by_development_subdivision_since",
     description: "Count closed sales for a development and subdivision since a date.",
     whereField: "development_name",
@@ -478,6 +500,16 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     name: "mls.count_active_by_zip",
     description: "Count active listings for a ZIP.",
     field: "zip_code"
+  });
+
+  registerActiveCountTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.count_active_by_area",
+    description: "Count active listings for an MLS area.",
+    field: "area"
   });
 
   registerAggregateTool({
@@ -648,6 +680,62 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     extraFilters: "and nullif(sold_price, '') is not null"
   });
 
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.median_sale_price_by_area_since",
+    description: "Median sale price for an MLS area since a date.",
+    whereField: "area",
+    dateMode: "since",
+    aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
+    resultKey: "median_sale_price",
+    extraFilters: "and nullif(sold_price, '') is not null"
+  });
+
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.avg_sale_price_by_area_since",
+    description: "Average sale price for an MLS area since a date.",
+    whereField: "area",
+    dateMode: "since",
+    aggExpr: "avg(nullif(sold_price, '')::numeric)",
+    resultKey: "avg_sale_price",
+    extraFilters: "and nullif(sold_price, '') is not null"
+  });
+
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.median_sale_price_by_area_between",
+    description: "Median sale price for an MLS area between two dates.",
+    whereField: "area",
+    dateMode: "between",
+    aggExpr: "percentile_cont(0.5) within group (order by nullif(sold_price, '')::numeric)",
+    resultKey: "median_sale_price",
+    extraFilters: "and nullif(sold_price, '') is not null"
+  });
+
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.avg_sale_price_by_area_between",
+    description: "Average sale price for an MLS area between two dates.",
+    whereField: "area",
+    dateMode: "between",
+    aggExpr: "avg(nullif(sold_price, '')::numeric)",
+    resultKey: "avg_sale_price",
+    extraFilters: "and nullif(sold_price, '') is not null"
+  });
+
   const pricePerSqftExpr = "percentile_cont(0.5) within group (order by (nullif(sold_price, '')::numeric / nullif(nullif(sqft_living, '')::numeric, 0)))";
   const pricePerSqftFilter = "and nullif(sold_price, '') is not null and nullif(sqft_living, '') is not null";
 
@@ -673,6 +761,34 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     name: "mls.median_price_per_sqft_by_development_between",
     description: "Median sale price per sqft for a development between two dates.",
     whereField: "development_name",
+    dateMode: "between",
+    aggExpr: pricePerSqftExpr,
+    resultKey: "median_price_per_sqft",
+    extraFilters: pricePerSqftFilter
+  });
+
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.median_price_per_sqft_by_area_since",
+    description: "Median sale price per sqft for an MLS area since a date.",
+    whereField: "area",
+    dateMode: "since",
+    aggExpr: pricePerSqftExpr,
+    resultKey: "median_price_per_sqft",
+    extraFilters: pricePerSqftFilter
+  });
+
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.median_price_per_sqft_by_area_between",
+    description: "Median sale price per sqft for an MLS area between two dates.",
+    whereField: "area",
     dateMode: "between",
     aggExpr: pricePerSqftExpr,
     resultKey: "median_price_per_sqft",
@@ -772,6 +888,35 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     pool,
     requiredScopes,
     requireAuth,
+    name: "mls.median_days_on_market_by_area_since",
+    description: "Median days on market for an MLS area since a date.",
+    whereField: "area",
+    dateMode: "since",
+    aggExpr:
+      "percentile_cont(0.5) within group (order by (nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
+    resultKey: "median_days_on_market",
+    extraFilters: "and nullif(listing_date, '')::date is not null"
+  });
+
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.avg_days_on_market_by_area_since",
+    description: "Average days on market for an MLS area since a date.",
+    whereField: "area",
+    dateMode: "since",
+    aggExpr: "avg((nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
+    resultKey: "avg_days_on_market",
+    extraFilters: "and nullif(listing_date, '')::date is not null"
+  });
+
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
     name: "mls.median_days_on_market_by_development_between",
     description: "Median days on market for a development between two dates.",
     whereField: "development_name",
@@ -825,6 +970,35 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     extraFilters: "and nullif(listing_date, '')::date is not null"
   });
 
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.median_days_on_market_by_area_between",
+    description: "Median days on market for an MLS area between two dates.",
+    whereField: "area",
+    dateMode: "between",
+    aggExpr:
+      "percentile_cont(0.5) within group (order by (nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
+    resultKey: "median_days_on_market",
+    extraFilters: "and nullif(listing_date, '')::date is not null"
+  });
+
+  registerAggregateTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.avg_days_on_market_by_area_between",
+    description: "Average days on market for an MLS area between two dates.",
+    whereField: "area",
+    dateMode: "between",
+    aggExpr: "avg((nullif(sold_date, '')::date - nullif(listing_date, '')::date))",
+    resultKey: "avg_days_on_market",
+    extraFilters: "and nullif(listing_date, '')::date is not null"
+  });
+
   registerNewListingCount({
     server,
     pool,
@@ -845,6 +1019,16 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     field: "development_name"
   });
 
+  registerNewListingCount({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.count_new_listings_by_area_since",
+    description: "Count new listings for an MLS area since a date.",
+    field: "area"
+  });
+
   registerUnderContractCount({
     server,
     pool,
@@ -863,6 +1047,16 @@ export function registerMlsMetricsTools({ server, pool, requiredScopes, requireA
     name: "mls.count_under_contract_by_development",
     description: "Count under contract listings for a development.",
     field: "development_name"
+  });
+
+  registerUnderContractCount({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.count_under_contract_by_area",
+    description: "Count under contract listings for an MLS area.",
+    field: "area"
   });
 
   registerListingLookup({
