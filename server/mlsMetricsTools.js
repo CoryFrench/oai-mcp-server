@@ -280,6 +280,129 @@ function registerAggregateTool({
   );
 }
 
+function registerTopSalesTool({
+  server,
+  pool,
+  requiredScopes,
+  requireAuth,
+  name,
+  description,
+  inputField,
+  queryField = inputField,
+  sourceCte = MLS_LATEST_LISTINGS_CTE,
+  dateMode,
+  useWfDevelopmentOutput = false
+}) {
+  const baseSchema = {
+    [inputField]: z.string().trim().min(2).max(200),
+    date_from: z.string().trim().min(8).max(10),
+    count: z.number().int().min(1).max(50).default(10)
+  };
+  if (dateMode === "between") {
+    baseSchema.date_to = z.string().trim().min(8).max(10);
+  }
+
+  let inputSchema = z.object(baseSchema);
+  if (dateMode === "between") {
+    inputSchema = inputSchema.refine(args => args.date_from <= args.date_to, {
+      message: "date_from must be on or before date_to",
+      path: ["date_to"]
+    });
+  }
+
+  const developmentOutputField = useWfDevelopmentOutput ? "wf_development" : "development_name";
+  const developmentOutputAlias = useWfDevelopmentOutput ? "wf_development" : "development_name";
+
+  server.registerTool(
+    name,
+    {
+      description,
+      inputSchema,
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+      _meta: { securitySchemes: [{ type: "oauth2", scopes: requiredScopes }] }
+    },
+    async (args, extra) => {
+      const authError = requireAuth(extra, requiredScopes);
+      if (authError) return authError;
+
+      const params = [args[inputField].trim(), args.date_from];
+      let dateClause = "and nullif(sold_date, '')::date >= $2";
+      if (dateMode === "between") {
+        params.push(args.date_to);
+        dateClause = "and nullif(sold_date, '')::date between $2 and $3";
+      }
+      params.push(args.count);
+      const countParam = `$${params.length}`;
+
+      const result = await pool.query(
+        `
+        ${sourceCte}
+        select
+          listing_id,
+          nullif(sold_price, '')::numeric as sold_price,
+          nullif(sold_date, '')::date as sold_date,
+          city,
+          zip_code,
+          street_number,
+          street_name,
+          street_suffix,
+          ${developmentOutputField} as ${developmentOutputAlias},
+          subdivision,
+          nullif(total_bedrooms, '')::numeric as beds,
+          nullif(baths_full, '')::numeric as baths_full,
+          nullif(baths_half, '')::numeric as baths_half,
+          nullif(sqft_living, '')::numeric as sqft_living,
+          case
+            when nullif(sqft_living, '')::numeric is null then null
+            when nullif(sqft_living, '')::numeric = 0 then null
+            else nullif(sold_price, '')::numeric / nullif(sqft_living, '')::numeric
+          end as price_per_sqft
+        from latest_listings
+        where ${buildClosedSalesFilters("")}
+          and ${queryField} ILIKE $1
+          ${dateClause}
+          and nullif(sold_price, '')::numeric is not null
+        order by
+          nullif(sold_price, '')::numeric desc,
+          nullif(sold_date, '')::date desc,
+          listing_id asc
+        limit ${countParam}
+        `,
+        params
+      );
+
+      const scope = {
+        [inputField]: args[inputField].trim()
+      };
+      if (dateMode === "between") {
+        scope.date_from = args.date_from;
+        scope.date_to = args.date_to;
+      } else {
+        scope.date_from = args.date_from;
+      }
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                scope,
+                date_basis: "sold_date",
+                count_requested: args.count,
+                count_returned: result.rowCount ?? 0,
+                rows: result.rows
+              },
+              null,
+              2
+            )
+          }
+        ]
+      };
+    }
+  );
+}
+
 function registerNewListingCount({
   server,
   pool,
@@ -410,6 +533,84 @@ function registerListingLookup({ server, pool, requiredScopes, requireAuth, name
 }
 
 export function registerMlsMetricsTools({ server, pool, requiredScopes, requireAuth }) {
+  registerTopSalesTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.top_sales_by_development_since",
+    description:
+      "Top sold listings by sold price for a development since a date (sold_date filter). Use utils.list_developments.",
+    inputField: "development_name",
+    queryField: "wf_development",
+    sourceCte: MLS_DEVELOPMENT_LATEST_LISTINGS_CTE,
+    dateMode: "since",
+    useWfDevelopmentOutput: true
+  });
+
+  registerTopSalesTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.top_sales_by_development_between",
+    description:
+      "Top sold listings by sold price for a development between dates (sold_date filter). Use utils.list_developments.",
+    inputField: "development_name",
+    queryField: "wf_development",
+    sourceCte: MLS_DEVELOPMENT_LATEST_LISTINGS_CTE,
+    dateMode: "between",
+    useWfDevelopmentOutput: true
+  });
+
+  registerTopSalesTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.top_sales_by_city_since",
+    description:
+      "Top sold listings by sold price for a city since a date (sold_date filter). Use mls.list_cities.",
+    inputField: "city",
+    dateMode: "since"
+  });
+
+  registerTopSalesTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.top_sales_by_city_between",
+    description:
+      "Top sold listings by sold price for a city between dates (sold_date filter). Use mls.list_cities.",
+    inputField: "city",
+    dateMode: "between"
+  });
+
+  registerTopSalesTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.top_sales_by_zip_since",
+    description:
+      "Top sold listings by sold price for a ZIP since a date (sold_date filter). Use mls.list_zip_codes.",
+    inputField: "zip_code",
+    dateMode: "since"
+  });
+
+  registerTopSalesTool({
+    server,
+    pool,
+    requiredScopes,
+    requireAuth,
+    name: "mls.top_sales_by_zip_between",
+    description:
+      "Top sold listings by sold price for a ZIP between dates (sold_date filter). Use mls.list_zip_codes.",
+    inputField: "zip_code",
+    dateMode: "between"
+  });
+
   registerCountTool({
     server,
     pool,

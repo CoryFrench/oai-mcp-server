@@ -18,6 +18,7 @@ The goal is to expand the MCP server with a larger catalog of small, narrow, rea
 - [x] (2026-02-10 18:45Z) Normalized IRS state inputs and loosened county matching to support abbreviations.
 - [x] (2026-02-10 19:10Z) Added FRED series search and observations tools for API-backed series lookup.
 - [x] (2026-02-10 20:40Z) Implemented MLS metrics tools (counts, medians, DOM, new listings, under contract, and listing lookups).
+- [x] (2026-02-17 15:10Z) Added MLS top-sales tools for development/city/zip with since/between variants, compact row output, and strict count/date validation.
 - [ ] Validate tools via MCP Inspector and in ChatGPT developer mode.
 
 ## Surprises & Discoveries
