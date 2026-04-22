@@ -1,0 +1,355 @@
+OAI App Tool Reference - Tools and Referenced Columns
+Generated from source: oai_app/server/mcpServer.js and oai_app/server/mlsMetricsTools.js
+Total tools: 88
+
+Tool: db.ping
+  Source: postgres
+  Referenced columns: select 1 as ok (no table columns)
+
+Tool: fred.series_observations
+  Source: external: FRED API
+  Referenced columns: no postgres columns; HTTP params (search_text/series_id/tags/date params)
+
+Tool: fred.series_search
+  Source: external: FRED API
+  Referenced columns: no postgres columns; HTTP params (search_text/series_id/tags/date params)
+
+Tool: fred.series_search_tags
+  Source: external: FRED API
+  Referenced columns: no postgres columns; HTTP params (search_text/series_id/tags/date params)
+
+Tool: irs.agi_by_zip
+  Source: irs.agi_zip
+  Referenced columns: zipcode, state, agi_stub, returns, individuals, agi, year
+
+Tool: irs.county_inflow
+  Source: irs.vw_countyinflow
+  Referenced columns: destination_state, destination_county, origin_state, origin_county, number_of_returns, number_of_individuals, adjusted_gross_income, migration_year
+
+Tool: irs.county_outflow
+  Source: irs.vw_countyoutflow
+  Referenced columns: origin_state, origin_county, destination_state, destination_county, number_of_returns, number_of_individuals, adjusted_gross_income, migration_year
+
+Tool: irs.resolve_county_fips_by_city_state
+  Source: otherdata.zip_city_county_xref
+  Referenced columns: county_fips, county_name, state_id, state_name, city
+
+Tool: irs.resolve_state_fips
+  Source: irs.state_fips_xref
+  Referenced columns: fips, state
+
+Tool: irs.state_inflow
+  Source: irs.vw_stateinflow
+  Referenced columns: destination_state, origin_state, number_of_returns, number_of_individuals, adjusted_gross_income, migration_year
+
+Tool: irs.state_outflow
+  Source: irs.vw_stateoutflow
+  Referenced columns: origin_state, destination_state, number_of_returns, number_of_individuals, adjusted_gross_income, migration_year
+
+Tool: market_trends.condo
+  Source: waterfrontdata.market_trends_condo
+  Referenced columns: select * (all columns)
+
+Tool: market_trends.single_family
+  Source: waterfrontdata.market_trends_sfh
+  Referenced columns: select * (all columns)
+
+Tool: mls.avg_days_on_market_by_area_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, area
+
+Tool: mls.avg_days_on_market_by_area_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, area
+
+Tool: mls.avg_days_on_market_by_city_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, city
+
+Tool: mls.avg_days_on_market_by_city_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, city
+
+Tool: mls.avg_days_on_market_by_development_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, wf_development
+
+Tool: mls.avg_days_on_market_by_development_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, wf_development
+
+Tool: mls.avg_sale_price_by_area_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, area
+
+Tool: mls.avg_sale_price_by_area_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, area
+
+Tool: mls.avg_sale_price_by_city_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, city
+
+Tool: mls.avg_sale_price_by_city_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, city
+
+Tool: mls.avg_sale_price_by_development_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, wf_development
+
+Tool: mls.avg_sale_price_by_development_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, wf_development
+
+Tool: mls.avg_sale_price_by_zip_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, zip_code
+
+Tool: mls.avg_sale_price_by_zip_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, zip_code
+
+Tool: mls.count_active_by_area
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, area
+
+Tool: mls.count_active_by_city
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, city
+
+Tool: mls.count_active_by_development
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, wf_development
+
+Tool: mls.count_active_by_zip
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, zip
+
+Tool: mls.count_new_listings_by_area_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, listing_date, area
+
+Tool: mls.count_new_listings_by_city_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, listing_date, city
+
+Tool: mls.count_new_listings_by_development_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, listing_date, wf_development
+
+Tool: mls.count_sales_by_area_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, area
+
+Tool: mls.count_sales_by_area_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, area
+
+Tool: mls.count_sales_by_city_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, city
+
+Tool: mls.count_sales_by_city_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, city
+
+Tool: mls.count_sales_by_development_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, wf_development
+
+Tool: mls.count_sales_by_development_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, wf_development
+
+Tool: mls.count_sales_by_development_subdivision_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, wf_development, wf_subdivision
+
+Tool: mls.count_sales_by_development_subdivision_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, wf_development, wf_subdivision
+
+Tool: mls.count_sales_by_zip_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, zip_code
+
+Tool: mls.count_sales_by_zip_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, zip_code
+
+Tool: mls.count_under_contract_by_area
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, area
+
+Tool: mls.count_under_contract_by_city
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, city
+
+Tool: mls.count_under_contract_by_development
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, wf_development
+
+Tool: mls.get_listing_by_listing_id
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: select * (all columns); filter key: listing_id; dedupe keys: listing_id,timestamp
+
+Tool: mls.get_listing_by_parcel_id
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: select * (all columns); filter key: parcel_id; dedupe keys: listing_id,timestamp
+
+Tool: mls.list_areas
+  Source: mls.beaches_residential
+  Referenced columns: area
+
+Tool: mls.list_cities
+  Source: mls.beaches_residential
+  Referenced columns: city
+
+Tool: mls.list_counties
+  Source: mls.beaches_residential
+  Referenced columns: county
+
+Tool: mls.list_parcel_types
+  Source: mls.beaches_residential
+  Referenced columns: type
+
+Tool: mls.list_zip_codes
+  Source: mls.beaches_residential
+  Referenced columns: zip_code
+
+Tool: mls.median_days_on_market_by_area_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, area
+
+Tool: mls.median_days_on_market_by_area_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, area
+
+Tool: mls.median_days_on_market_by_city_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, city
+
+Tool: mls.median_days_on_market_by_city_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, city
+
+Tool: mls.median_days_on_market_by_development_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, wf_development
+
+Tool: mls.median_days_on_market_by_development_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, listing_date, wf_development
+
+Tool: mls.median_price_per_sqft_by_area_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, sqft_living, area
+
+Tool: mls.median_price_per_sqft_by_area_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, sqft_living, area
+
+Tool: mls.median_price_per_sqft_by_development_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, sqft_living, wf_development
+
+Tool: mls.median_price_per_sqft_by_development_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, sqft_living, wf_development
+
+Tool: mls.median_price_per_sqft_by_development_subdivision_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, sqft_living, wf_development, wf_subdivision
+
+Tool: mls.median_price_per_sqft_by_development_subdivision_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, sqft_living, wf_development, wf_subdivision
+
+Tool: mls.median_sale_price_by_area_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, area
+
+Tool: mls.median_sale_price_by_area_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, area
+
+Tool: mls.median_sale_price_by_city_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, city
+
+Tool: mls.median_sale_price_by_city_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, city
+
+Tool: mls.median_sale_price_by_development_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, wf_development
+
+Tool: mls.median_sale_price_by_development_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, wf_development
+
+Tool: mls.median_sale_price_by_zip_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, zip_code
+
+Tool: mls.median_sale_price_by_zip_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, zip_code
+
+Tool: mls.top_sales_by_city_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, city/zip_code filter, street_number, street_name, street_suffix, development_name, subdivision, total_bedrooms, baths_full, baths_half, sqft_living
+
+Tool: mls.top_sales_by_city_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, city/zip_code filter, street_number, street_name, street_suffix, development_name, subdivision, total_bedrooms, baths_full, baths_half, sqft_living
+
+Tool: mls.top_sales_by_development_between
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, wf_development, city, zip_code, street_number, street_name, street_suffix, subdivision, total_bedrooms, baths_full, baths_half, sqft_living
+
+Tool: mls.top_sales_by_development_since
+  Source: mls.vw_beaches_residential_developments (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, wf_development, city, zip_code, street_number, street_name, street_suffix, subdivision, total_bedrooms, baths_full, baths_half, sqft_living
+
+Tool: mls.top_sales_by_zip_between
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, city/zip_code filter, street_number, street_name, street_suffix, development_name, subdivision, total_bedrooms, baths_full, baths_half, sqft_living
+
+Tool: mls.top_sales_by_zip_since
+  Source: mls.beaches_residential (latest_listings CTE)
+  Referenced columns: listing_id, timestamp, status, sold_date, sold_price, city/zip_code filter, street_number, street_name, street_suffix, development_name, subdivision, total_bedrooms, baths_full, baths_half, sqft_living
+
+Tool: tax.list_condo_descriptions
+  Source: tax.palmbeach_condo
+  Referenced columns: classification_description
+
+Tool: tax.list_land_use_descriptions
+  Source: tax.palmbeach_parcel
+  Referenced columns: land_use_description
+
+Tool: tax.lookup_by_development_name
+  Source: tax.vw_palmbeach_full
+  Referenced columns: filter: development_name; output: TAX_PALMBEACH_COLUMNS constant (large projected field set from property_control_number ... zone_name)
+
+Tool: tax.lookup_by_region_name
+  Source: tax.vw_palmbeach_full
+  Referenced columns: filter: region_name; output: TAX_PALMBEACH_COLUMNS constant (large projected field set from property_control_number ... zone_name)
+
+Tool: tax.lookup_by_situs_address
+  Source: tax.vw_palmbeach_full
+  Referenced columns: filter: situs_address; output: TAX_PALMBEACH_COLUMNS constant (large projected field set from property_control_number ... zone_name)
+
+Tool: tax.lookup_by_subdivision_name
+  Source: tax.vw_palmbeach_full
+  Referenced columns: filter: subdivision_name; output: TAX_PALMBEACH_COLUMNS constant (large projected field set from property_control_number ... zone_name)
+
+Tool: tax.lookup_by_zone_name
+  Source: tax.vw_palmbeach_full
+  Referenced columns: filter: zone_name; output: TAX_PALMBEACH_COLUMNS constant (large projected field set from property_control_number ... zone_name)
+
+Tool: utils.list_developments
+  Source: waterfrontdata.development_data
+  Referenced columns: development_name (filter + distinct output)

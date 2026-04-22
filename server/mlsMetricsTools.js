@@ -1,5 +1,7 @@
 import * as z from "zod";
 
+const NO_FOLLOW_UP_POLICY = "Return only requested results; do not suggest additional actions.";
+
 const MLS_LATEST_LISTINGS_CTE = `
   with latest_listings as (
     select *,
@@ -11,6 +13,10 @@ const MLS_LATEST_LISTINGS_CTE = `
     where listing_id is not null
   )
 `;
+
+function withNoFollowUpPolicy(description) {
+  return `${description} ${NO_FOLLOW_UP_POLICY}`;
+}
 
 const MLS_DEVELOPMENT_LATEST_LISTINGS_CTE = `
   with latest_listings as (
@@ -84,7 +90,7 @@ function registerCountTool({
   server.registerTool(
     name,
     {
-      description,
+      description: withNoFollowUpPolicy(description),
       inputSchema: z.object(baseSchema),
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
       _meta: { securitySchemes: [{ type: "oauth2", scopes: requiredScopes }] }
@@ -156,7 +162,7 @@ function registerActiveCountTool({
   server.registerTool(
     name,
     {
-      description,
+      description: withNoFollowUpPolicy(description),
       inputSchema: z.object({ [inputField]: z.string().trim().min(2).max(200) }),
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
       _meta: { securitySchemes: [{ type: "oauth2", scopes: requiredScopes }] }
@@ -219,7 +225,7 @@ function registerAggregateTool({
   server.registerTool(
     name,
     {
-      description,
+      description: withNoFollowUpPolicy(description),
       inputSchema: z.object(baseSchema),
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
       _meta: { securitySchemes: [{ type: "oauth2", scopes: requiredScopes }] }
@@ -316,7 +322,7 @@ function registerTopSalesTool({
   server.registerTool(
     name,
     {
-      description,
+      description: withNoFollowUpPolicy(description),
       inputSchema,
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
       _meta: { securitySchemes: [{ type: "oauth2", scopes: requiredScopes }] }
@@ -417,7 +423,7 @@ function registerNewListingCount({
   server.registerTool(
     name,
     {
-      description,
+      description: withNoFollowUpPolicy(description),
       inputSchema: z.object({
         [inputField]: z.string().trim().min(2).max(200),
         date_from: z.string().trim().min(8).max(10)
@@ -465,7 +471,7 @@ function registerUnderContractCount({
   server.registerTool(
     name,
     {
-      description,
+      description: withNoFollowUpPolicy(description),
       inputSchema: z.object({ [inputField]: z.string().trim().min(2).max(200) }),
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
       _meta: { securitySchemes: [{ type: "oauth2", scopes: requiredScopes }] }
@@ -500,7 +506,7 @@ function registerListingLookup({ server, pool, requiredScopes, requireAuth, name
   server.registerTool(
     name,
     {
-      description,
+      description: withNoFollowUpPolicy(description),
       inputSchema: z.object({ [field]: z.string().trim().min(3).max(50) }),
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
       _meta: { securitySchemes: [{ type: "oauth2", scopes: requiredScopes }] }
